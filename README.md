@@ -25,7 +25,7 @@ The build produces `dist/`, including real `index.html`, `de/index.html`, and `t
 - `src/App.jsx`: React components and translated interaction labels in `ui`.
 - `src/content.js`: project data, translations, and social URLs.
 - `src/styles.css`: responsive design, keyboard focus, reduced-motion handling, and print styling. Uses system fonts without external font requests.
-- `public/images/me.jpg`: replace this portrait to update all languages. Adjust `.photo-frame img` for a different crop.
+- `public/images/me.jpeg`: replace this portrait to update all languages. Adjust `.photo-frame img` for a different crop.
 - `public/videos/Dead Inside.mp4`: original trailer.
 - `public/images/dead-inside-trailer.png`: trailer preview frame.
 - `index.html`, `de/index.html`, `tr/index.html`: translated metadata and React entry points. Update the alternate URLs if the site origin changes.
@@ -58,3 +58,15 @@ The GitHub Actions workflow builds and uploads `dist/` for GitHub Pages on pushe
 [AminDaryan/About-Me](https://github.com/AminDaryan/About-Me) informed the editorial spacing, readable project entries, and interactive explanations. This portfolio uses its own layout, palette, React implementation, content, and assets. No code or artwork was copied from the reference.
 
 DFKI content separates three MASTER XR training scenes from a separate 15-participant study. Dogukan's role is scene development and research engineering, not paper authorship. The comparison figure explains study inputs; it does not perform eye tracking or assert study outcomes. Other professional details come from the supplied CV and user clarifications.
+
+## Interactive portfolio graph
+
+The default homepage uses `src/GraphPortfolio.jsx`, `src/GraphScene.jsx`, and `src/developer.css`. The earlier multilingual reading view is available with `?view=classic`.
+
+- `src/graph-data.js` owns the CV-backed organization, project, and technology relationships. Role edges distinguish employment, study, solo work, and capstone collaboration.
+- All work centers Dogukan and shows organizations and projects without technology nodes. Focused filters expose specific projects and the tools used for them.
+- `src/project-details.js` contains expanded CV-based descriptions. Replace `public/images/me.jpg` with a professional portrait when ready; the hero uses a 4:5 frame.
+- The graph orbits continuously during hover, touch, dragging, filtering, and project navigation. Only the Pause control stops it. Reduced-motion preferences disable initial automatic rotation.
+- Company-logo provenance is documented in `public/logos/SOURCES.md`.
+
+Browser checks cover graph relationships, logos, orbit/pause behavior, project navigation, video playback, keyboard operation, and mobile layouts.

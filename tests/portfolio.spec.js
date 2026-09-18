@@ -4,7 +4,7 @@ for (const [lang, route] of [['en', '/'], ['de', '/de/index.html'], ['tr', '/tr/
   test(`${lang}: direct language page, responsive layout, and media assets`, async ({ page }) => {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto(route);
+    await page.goto(route + '?view=classic');
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', lang);
     await expect(page.locator('.language-switch a[aria-current=page]')).toHaveText(lang.toUpperCase());
@@ -23,7 +23,7 @@ for (const [lang, route] of [['en', '/'], ['de', '/de/index.html'], ['tr', '/tr/
 }
 
 test('filters, study method selection, career keyboard control, and project navigation', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?view=classic');
   await page.getByRole('button', { name: 'Backend', exact: true }).click();
   await expect(page.locator('[data-project]')).toHaveCount(3);
   await expect(page.locator('video')).toHaveCount(0);
@@ -44,12 +44,12 @@ test('filters, study method selection, career keyboard control, and project navi
 });
 
 test('language navigation preserves the section and trailer actually plays', async ({ page }) => {
-  await page.goto('/#contact');
+  await page.goto('/?view=classic#contact');
   await page.getByRole('link', { name: 'Deutsch', exact: true }).click();
-  await expect(page).toHaveURL('/de/index.html#contact');
+  await expect(page).toHaveURL('/de/index.html?view=classic#contact');
   await expect(page.locator('#contact h2')).toContainText('Ein Projekt');
   await page.getByRole('link', { name: 'Türkçe', exact: true }).click();
-  await expect(page).toHaveURL('/tr/index.html#contact');
+  await expect(page).toHaveURL('/tr/index.html?view=classic#contact');
   await expect(page.locator('#contact h2')).toContainText('Bir proje');
   const video = page.locator('video');
   await video.scrollIntoViewIfNeeded();
@@ -57,3 +57,4 @@ test('language navigation preserves the section and trailer actually plays', asy
   await expect.poll(() => video.evaluate(v => v.currentTime)).toBeGreaterThan(0.2);
   await video.evaluate(v => v.pause());
 });
+
