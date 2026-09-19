@@ -18,7 +18,7 @@ test('intro, centered graph, logos, detailed video, and back navigation',async({
  await expect(page.locator('.dev-brand')).toContainText('Dogukan Demir');await expect(page.locator('.dev-summary-strip,.profile-current,.contact-link')).toHaveCount(0);await expect(page.locator('.hero-socials a')).toHaveCount(4);await expect(page.locator('.graph-node.skill')).toHaveCount(0);
  await expect(page.locator('.graph-node.person')).toHaveAccessibleName('Dogukan Demir');
  for(const img of await page.locator('.graph-node img').all())await expect.poll(()=>img.evaluate(i=>i.complete&&i.naturalWidth>0)).toBeTruthy();
- await page.locator('.graph-node').filter({hasText:'Dead Inside'}).click();await expect(page.locator('#project-heading')).toHaveText('Dead Inside');await expect(page.locator('.graph-scene')).toHaveCount(0);expect((await page.locator('video').boundingBox()).width).toBeGreaterThan(900);
+ await page.locator('.graph-node').filter({hasText:'Dead Inside'}).click();await expect(page.locator('#project-heading')).toHaveText('Dead Inside');await expect(page.locator('.graph-scene')).toHaveCount(1);expect((await page.locator('video').boundingBox()).width).toBeGreaterThan(900);
  await expect.poll(()=>page.locator('video').evaluate(v=>v.readyState)).toBeGreaterThanOrEqual(2);await page.locator('video').evaluate(async v=>{v.muted=true;await v.play();});await expect.poll(()=>page.locator('video').evaluate(v=>v.currentTime)).toBeGreaterThan(.2);
  await page.locator('.project-connections').getByRole('button',{name:/Built with Unity/}).click();await expect(page.locator('#project-heading')).toHaveText('Unity');await page.goBack();await expect(page.locator('#project-heading')).toHaveText('Dead Inside');await page.getByRole('button',{name:'Back to graph'}).click();await expect(page.locator('.graph-scene')).toBeVisible();expect(errors).toEqual([]);
 });
@@ -64,3 +64,26 @@ test('Work navigation preserves autoplay and explicit Rotate works with reduced 
 });
 
 
+
+
+test('details stay below the same graph and can be closed independently',async({page})=>{
+ await page.goto('/');
+ await page.locator('.graph-scene').evaluate(el=>{window.originalGraph=el;});
+ await page.locator('[data-node-id="dfki"]').click();
+ await expect(page.locator('#project-heading')).toHaveText('DFKI');
+ expect(await page.evaluate(()=>window.originalGraph===document.querySelector('.graph-scene'))).toBeTruthy();
+ expect(await page.locator('#project-detail').evaluate(el=>el.getBoundingClientRect().top>=document.querySelector('.explorer-view').getBoundingClientRect().bottom)).toBeTruthy();
+ await page.getByRole('button',{name:'Back to graph'}).click();
+ await expect(page.locator('#project-heading')).toHaveText('DFKI');
+ await page.locator('[data-node-id="dfki"]').click();
+ await expect(page.locator('#project-heading')).toBeFocused();
+ await page.getByRole('link',{name:'Work',exact:true}).click();
+ await expect(page.locator('#project-heading')).toHaveText('DFKI');
+ await page.getByRole('button',{name:'Close details'}).click();
+ await expect(page.locator('#project-detail')).toHaveCount(0);
+ await expect(page.locator('#explorer-heading')).toBeFocused();
+ await expect(page).toHaveURL(/#work$/);
+ expect(await page.evaluate(()=>window.originalGraph===document.querySelector('.graph-scene'))).toBeTruthy();
+ await page.goBack();await expect(page.locator('#project-heading')).toHaveText('DFKI');
+ await page.goForward();await expect(page.locator('#project-detail')).toHaveCount(0);
+});
