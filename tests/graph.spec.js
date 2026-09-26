@@ -13,6 +13,23 @@ test('CV relationships: person, organization, project, technology',()=>{
  expect(ntt.edges).toContainEqual(expect.objectContaining({from:'mobile',to:'tool-typescript'}));expect(ntt.edges.some(e=>e.from==='chatbot'&&e.kind==='tool')).toBeFalsy();
 });
 
+test('every degree is visible by default and the route opens stories',async({page})=>{
+ const {nodes,edges}=makeGraph();const all=graphView(nodes,edges,'all','');
+ for(const id of ['rptu','duzce','uab'])expect(all.nodes.map(n=>n.id)).toContain(id);
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
+ for(const name of ['RPTU','Düzce University','UAB Barcelona'])await expect(page.locator('.graph-node').filter({hasText:name}).first()).toBeVisible();
+ const tabs=page.getByRole('tablist',{name:'Career route'}).getByRole('tab');await expect(tabs).toHaveCount(10);
+ await tabs.first().focus();await page.keyboard.press('End');await page.keyboard.press('ArrowLeft');
+ await expect(tabs.nth(8)).toBeFocused();await expect(page.getByRole('tabpanel')).toContainText('drink kiosks');
+ await page.getByRole('button',{name:'Read the full story'}).click();await expect(page.locator('#project-heading')).toHaveText('Rush Automated Systems');
+ await expect(page.locator('.project-hook')).toBeVisible();await expect(page.locator('.story-figure')).toHaveCount(2);
+ await page.getByRole('button',{name:'Full cloud'}).click();await expect(page.locator('.figure-readout').first()).toContainText('audio');
+ await page.getByRole('button',{name:'Without soft sensing'}).click();await expect(page.locator('.figure-readout').nth(1)).toContainText('Breaks mid-event');
+ await tabs.nth(6).click();await page.getByRole('button',{name:'Read the full story'}).click();await expect(page.locator('#project-heading')).toHaveText('UAB Barcelona');
+ await expect(page.locator('.edu-row')).toHaveCount(3);
+ expect(errors).toEqual([]);
+});
+
 test('intro, centered graph, logos, detailed video, and back navigation',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
  await expect(page.locator('.dev-brand')).toContainText('Dogukan Demir');await expect(page.locator('.dev-summary-strip,.profile-current,.contact-link')).toHaveCount(0);await expect(page.locator('.hero-socials a')).toHaveCount(4);await expect(page.locator('.graph-node.skill')).toHaveCount(0);

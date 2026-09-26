@@ -541,6 +541,13 @@ function About({ t }) {
                 <small>2023 — {t.present}</small>
               </p>
               <p>
+                <strong>{t.exchange}</strong>
+                <br />
+                Universitat Autònoma de Barcelona
+                <br />
+                <small>2026</small>
+              </p>
+              <p>
                 <strong>{t.bachelor}</strong>
                 <br />
                 Düzce University

@@ -19,6 +19,8 @@ const orgs = [
   ['campus','Campus Games','Backend Developer','backend','campus.png',[40,-130,65],'campus'],
   ['rush','Rush Automated Systems','Software Team Lead','backend','rush.png',[365,-155,-35],'rush'],
   ['rptu','RPTU','M.Sc. Computer Science','education','rptu.svg',[0,0,0],'rptu'],
+  ['duzce','Düzce University','B.Sc. Computer Engineering','education','duzce.png',[0,0,0],'duzce'],
+  ['uab','UAB Barcelona','Erasmus+ exchange · 2026','education','uab.svg',[0,0,0],'uab'],
 ];
 const projects = [
   ['master-xr','MASTER XR','VR manufacturing training','research',[-455,-265,75],'master-xr'],
@@ -29,9 +31,9 @@ const projects = [
   ['mobile','E-commerce apps','3 production mobile apps','backend',[175,290,10],null],
   ['chatbot','Mercedes-Benz chatbot','Production conversational service','backend',[355,210,-65],null],
   ['voice','Edge / cloud voice','Local speech + cloud inference','backend',[465,0,90],null],
-  ['kiosk','Kiosk & hardware backend','3 applications · MQTT · NFC','backend',[245,-20,-90],null],
-  ['bsc','Düzce University','B.Sc. Computer Engineering','education',[-230,50,40],null],
-  ['erasmus','UAB Barcelona','Erasmus+ · Jan–Jul 2026','education',[230,50,-40],null],
+  ['kiosk','Kiosk & control backend','Kiosk · admin & machine panels','backend',[245,-20,-90],null],
+  ['payments','Payments & POS','POS terminal · payment services','backend',[0,0,0],null],
+  ['predictive','Predictive maintenance','TÜBİTAK 1507 · soft sensing','backend',[0,0,0],null],
 ];
 // Specific project-to-tool claims come from the CV, not the general skills list.
 const toolUsage = {
@@ -45,6 +47,8 @@ const toolUsage = {
  voice:['Go','Raspberry Pi 5','AWS Bedrock','Whisper','Piper'],
  kiosk:['Go','REST APIs','MQTT','NFC','AWS EC2','Docker Compose','nginx','Cloudflare','GitHub Actions'],
  campus:['Go','MongoDB','MySQL','Firebase OTP','Docker','SSO'],
+ payments:[],
+ predictive:[],
 };
 const descriptions = {
  gtk: ['Co-developed a modular Unity framework for gaze interaction and passive attention monitoring.','Refactored dependency modules, separated responsibilities, and implemented reusable gaze selection, dragging, and hybrid gaze/controller components.'],
@@ -52,9 +56,9 @@ const descriptions = {
  mobile: ['Delivered 3 production e-commerce applications for the Kuwait market at NTT DATA.','Built with React Native and TypeScript, integrating 5 payment providers, SAP SDKs, Google and Apple Maps, location-based filtering, and SSO.'],
  chatbot: ['Implemented a production chatbot service for Mercedes-Benz while working at NTT DATA.','Developed backend services for conversational interactions and integrated the chatbot into the enterprise service ecosystem. The CV does not specify a separate technology stack for this service.'],
  voice: ['Designed a hybrid edge/cloud voice pipeline at Rush Automated Systems after benchmarking a full-cloud approach.','Speech-to-text and text-to-speech run on a Raspberry Pi 5, while AWS Bedrock handles LLM inference. This reduced response latency and per-request cost.'],
- kiosk: ['Architected a Go backend for a customer kiosk, an admin panel, and content management at Rush Automated Systems.','Designed the API, data model, and service boundaries; integrated dispensing hardware over MQTT and returning-customer authentication over NFC. Deployed on EC2 with Docker Compose, nginx, Cloudflare, and GitHub Actions.'],
- bsc: ['B.Sc. Computer Engineering · Düzce University · Sep 2019–Jan 2023.','The undergraduate foundation for my software engineering work.'],
- erasmus: ['Erasmus+ exchange at Universitat Autònoma de Barcelona · Jan–Jul 2026.','Coursework included Cloud Computing and Smart Industry, as part of my master’s studies at RPTU.'],
+ kiosk: ['Architected a Go backend for a customer kiosk, admin panels, machine control panels, and content management at Rush Automated Systems.','Designed the API, data model, and service boundaries; integrated dispensing hardware over MQTT and returning-customer authentication over NFC. Deployed on EC2 with Docker Compose, nginx, Cloudflare, and GitHub Actions.'],
+ payments: ['Integrated a physical POS terminal into RUSH-DESK and built the payment services behind it.','Guests pay by card, phone wallet, or NFC; the machine handles no cash.'],
+ predictive: ['Building a TÜBİTAK 1507-funded service for soft sensing and predictive maintenance across RUSH’s growing fleet of machines.','Soft sensing estimates what a machine does not measure directly from the signals it does; predictive maintenance flags wear before it turns into a failure in the field.'],
 };
 export function makeGraph() {
   const nodes = orgs.map(([id,title,short,category,logo,position,detailKey])=>({id,title,short,category,logo:`/logos/${logo}`,position,detailKey,kind:'organization',body:details[detailKey].intro,facts:[],tags:details[detailKey].stack,role:short}));
@@ -64,17 +68,18 @@ export function makeGraph() {
     ['dfki','master-xr','Developed training scenarios'],['dfki','gtk','Co-developed toolkit'],
     ['ntt','crm','Enterprise backend'],['ntt','mobile','Mobile development'],['ntt','chatbot','Chatbot implementation'],
     ['fraunhofer','agriculture','Capstone collaboration'],
-    ['rush','voice','Voice architecture'],['rush','kiosk','Backend & deployment'],
-    ['rptu','campus','University platform'],['rptu','agriculture','Master’s capstone'],['rptu','bsc','Previous degree'],['rptu','erasmus','Exchange semester'],
+    ['rush','voice','Voice architecture'],['rush','kiosk','Backend & deployment'],['rush','payments','Payment services'],['rush','predictive','TÜBİTAK 1507 R&D'],
+    ['rptu','campus','University platform'],['rptu','agriculture','Master’s capstone'],['rptu','duzce','Bachelor’s → master’s'],['rptu','uab','Erasmus+ semester'],
   ].map(([from,to,label])=>({from,to,label,kind:'work'}));
-  for (const [to,label] of [['dfki','Student Research Assistant'],['ntt','Software Engineer'],['rush','Software Team Lead'],['campus','Backend Developer'],['fraunhofer','Capstone collaboration'],['dead-inside','Solo developer'],['rptu','Master’s studies']]) edges.push({from:'dogukan',to,label,kind:'role'});
+  for (const [to,label] of [['dfki','Student Research Assistant'],['ntt','Software Engineer'],['rush','Software Team Lead'],['campus','Backend Developer'],['fraunhofer','Capstone collaboration'],['dead-inside','Solo developer'],['rptu','Master’s studies'],['duzce','Bachelor’s studies']]) edges.push({from:'dogukan',to,label,kind:'role'});
   for(const [id,tools] of Object.entries(toolUsage)) for(const title of tools){const toolId='tool-'+title.toLowerCase().replace(/[^a-z0-9]+/g,'-');if(!nodes.some(n=>n.id===toolId)) nodes.push({id:toolId,title,short:'Technology',kind:'skill',position:[0,0,0],body:`${title} in my work.`,tags:[],facts:[]}); edges.push({from:id,to:toolId,label:`Built with ${title}`,kind:'tool'});}
   for(const n of nodes.filter(n=>n.kind==='skill')){n.facts=edges.filter(e=>e.to===n.id).map(e=>`Used for ${nodes.find(x=>x.id===e.from).title}.`);}
   return {nodes,edges};
 }
 export function graphView(nodes,edges,filter,focus) {
   if(filter==='all'){
-    const positions={dogukan:[0,0,0],dfki:[-265,-155,45],'master-xr':[-485,-295,-65],gtk:[-270,-355,65],rush:[270,-150,-45],voice:[505,-275,55],kiosk:[315,-365,-70],campus:[350,70,85],ntt:[150,230,-30],crm:[-5,420,45],mobile:[235,425,-70],chatbot:[465,310,55],fraunhofer:[-260,205,-65],agriculture:[-470,345,55],'dead-inside':[-415,5,80],rptu:[0,-275,-75]};
+    // Education runs down the vertical axis; work fans out to either side of it.
+    const positions={dogukan:[0,0,0],dfki:[-280,-150,45],'master-xr':[-520,-250,-65],gtk:[-360,-360,65],rush:[285,-145,-45],voice:[530,-235,55],kiosk:[375,-365,-70],payments:[575,95,40],predictive:[610,-85,-80],campus:[365,75,85],ntt:[190,235,-30],crm:[40,425,45],mobile:[290,430,-70],chatbot:[505,315,55],fraunhofer:[-250,210,-65],agriculture:[-470,350,55],'dead-inside':[-440,20,80],rptu:[0,-250,-75],duzce:[-125,-430,40],uab:[140,-430,-30]};
     const visible=nodes.filter(n=>positions[n.id]).map(n=>({...n,position:positions[n.id]}));const ids=new Set(visible.map(n=>n.id));return {nodes:visible,edges:edges.filter(e=>ids.has(e.from)&&ids.has(e.to))};
   }
   const root=focus || scopes[filter][0];

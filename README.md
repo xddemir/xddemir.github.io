@@ -57,7 +57,7 @@ The GitHub Actions workflow builds and uploads `dist/` for GitHub Pages on pushe
 
 [AminDaryan/About-Me](https://github.com/AminDaryan/About-Me) informed the editorial spacing, readable project entries, and interactive explanations. This portfolio uses its own layout, palette, React implementation, content, and assets. No code or artwork was copied from the reference.
 
-DFKI content separates three MASTER XR training scenes from a separate 15-participant study. Dogukan's role is scene development and research engineering, not paper authorship. The comparison figure explains study inputs; it does not perform eye tracking or assert study outcomes. Other professional details come from the supplied CV and user clarifications.
+DFKI content separates three MASTER XR training scenes from a separate 20-participant study. Dogukan's role is scene development and research engineering, not paper authorship. The comparison figure explains study inputs; it does not perform eye tracking or assert study outcomes. Other professional details come from the supplied CV and user clarifications.
 
 ## Interactive portfolio graph
 
@@ -65,7 +65,9 @@ The default homepage uses `src/GraphPortfolio.jsx`, `src/GraphScene.jsx`, and `s
 
 - `src/graph-data.js` owns the CV-backed organization, project, and technology relationships. Role edges distinguish employment, study, solo work, and capstone collaboration.
 - All work centers Dogukan and shows organizations and projects without technology nodes. Focused filters expose specific projects and the tools used for them.
-- `src/project-details.js` contains expanded CV-based descriptions. Replace `public/images/me.jpg` with a professional portrait when ready; the hero uses a 4:5 frame.
+- `src/project-details.js` holds each story: a one-line `hook`, an `intro`, `chapters` (kicker, title, body), an optional `figure` placed after a chapter, and a closing `takeaway`. `education` lists every degree for the Background record. The hero portrait is `public/images/me.jpeg` in a 4:5 frame.
+- `src/journey.js` and `src/Journey.jsx` draw "The route so far": a road with one stop per chapter. It drives itself while in view, holds on hover or focus, and hands over the wheel on any click or arrow key. Reduced motion disables autoplay.
+- `src/StoryFigures.jsx` contains the interactive figures (voice pipeline placement, registration latency, gaze vs. controller input, Saga compensation, enemy state machine, field passes). Every caption states what is measured and what is illustrative.
 - The graph orbits continuously during hover, touch, dragging, filtering, and project navigation. Only the Pause control stops it. Reduced-motion preferences disable initial automatic rotation.
 - Company-logo provenance is documented in `public/logos/SOURCES.md`.
 
